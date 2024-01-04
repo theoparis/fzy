@@ -1,0 +1,15 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Test on Alpine Linux
+    runs-on: ubuntu-latest
+    container: docker://alpine
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install build dependencies
+      run: apk add build-base
+    - name: Compile and run tests
+      run: make -j$(nproc) && make -j$(nproc) test
