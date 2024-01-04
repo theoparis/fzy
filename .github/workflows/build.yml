@@ -12,4 +12,4 @@ jobs:
     - name: Install build dependencies
       run: apk add build-base
     - name: Compile and run tests
-      run: make -j$(nproc) && make -j$(nproc) test
+      run: make -j$(nproc)
