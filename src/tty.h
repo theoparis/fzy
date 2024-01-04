@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <termios.h>
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
 extern "C" {
 #endif
 

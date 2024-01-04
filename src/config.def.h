@@ -1,4 +1,4 @@
-#ifdef __cplusplus 
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -22,6 +22,6 @@ extern "C" {
 #define DEFAULT_WORKERS 0
 #define DEFAULT_SHOW_INFO 0
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
 }
 #endif

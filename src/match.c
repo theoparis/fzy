@@ -80,13 +80,8 @@ static void precompute_bonus(const char *haystack, score_t *match_bonus) {
 	}
 }
 
-<<<<<<< HEAD
 static void setup_match_struct(struct match_struct *match, const char *needle,
 			       const char *haystack) {
-=======
-static void setup_match_struct(struct match_struct *match, const char *needle,
-			       const char *haystack) {
->>>>>>> c5f30ea (rewrite strcasechr)
 	match->needle_len = strlen(needle);
 	match->haystack_len = strlen(haystack);
 
@@ -102,13 +97,8 @@ static void setup_match_struct(struct match_struct *match, const char *needle,
 	precompute_bonus(haystack, match->match_bonus);
 }
 
-<<<<<<< HEAD
 static inline void match_row(const struct match_struct *match, int row, score_t *curr_D,
 			     score_t *curr_M, const score_t *last_D, const score_t *last_M) {
-=======
-static inline void match_row(const struct match_struct *match, int row, score_t *curr_D,
-			     score_t *curr_M, const score_t *last_D, const score_t *last_M) {
->>>>>>> c5f30ea (rewrite strcasechr)
 	int n = match->needle_len;
 	int m = match->haystack_len;
 	int i = row;

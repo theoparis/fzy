@@ -33,14 +33,11 @@ static const char *usage_str =
     "     --reverse            Display from top, prompt at bottom\n"
     "     --no-color           Run colorless\n";
 
-static void
-usage(const char *argv0)
-{
+static void usage(const char *argv0) {
 	fprintf(stderr, usage_str, argv0);
 }
 
-static struct option longopts[] = {
-                   {"show-matches", required_argument, NULL, 'e'},
+static struct option longopts[] = {{"show-matches", required_argument, NULL, 'e'},
 				   {"query", required_argument, NULL, 'q'},
 				   {"lines", required_argument, NULL, 'l'},
 				   {"tty", required_argument, NULL, 't'},
@@ -62,110 +59,134 @@ static struct option longopts[] = {
 				   {"left-aborts", no_argument, NULL, 6},
 				   {"no-color", no_argument, NULL, 7},
 				   {"reverse", no_argument, NULL, 8},
-				   {NULL, 0, NULL, 0}
-};
+				   {NULL, 0, NULL, 0}};
 
-void
-options_init(options_t *options)
-{
+void options_init(options_t *options) {
 	/* Set defaults */
-	options->benchmark       = DEFAULT_BENCHMARK;
-	options->filter          = DEFAULT_FILTER;
-	options->init_search     = DEFAULT_INIT_SEARCH;
-	options->show_scores     = DEFAULT_SCORES;
-	options->scrolloff       = DEFAULT_SCROLLOFF;
-	options->tty_filename    = DEFAULT_TTY;
-	options->num_lines       = DEFAULT_NUM_LINES;
-	options->prompt          = DEFAULT_PROMPT;
-	options->workers         = DEFAULT_WORKERS;
+	options->benchmark = DEFAULT_BENCHMARK;
+	options->filter = DEFAULT_FILTER;
+	options->init_search = DEFAULT_INIT_SEARCH;
+	options->show_scores = DEFAULT_SCORES;
+	options->scrolloff = DEFAULT_SCROLLOFF;
+	options->tty_filename = DEFAULT_TTY;
+	options->num_lines = DEFAULT_NUM_LINES;
+	options->prompt = DEFAULT_PROMPT;
+	options->workers = DEFAULT_WORKERS;
 	options->input_delimiter = DEFAULT_DELIMITER;
-	options->show_info       = DEFAULT_SHOW_INFO;
-	options->pad             = DEFAULT_PAD;
-	options->multi           = DEFAULT_MULTI;
-	options->pointer         = DEFAULT_POINTER;
-	options->marker          = DEFAULT_MARKER;
-	options->cycle           = DEFAULT_CYCLE;
-	options->tab_accepts     = DEFAULT_TAB_ACCEPTS;
-	options->right_accepts   = DEFAULT_RIGHT_ACCEPTS;
-	options->left_aborts     = DEFAULT_LEFT_ABORTS;
-	options->no_color        = DEFAULT_NO_COLOR;
-	options->reverse         = DEFAULT_REVERSE;
+	options->show_info = DEFAULT_SHOW_INFO;
+	options->pad = DEFAULT_PAD;
+	options->multi = DEFAULT_MULTI;
+	options->pointer = DEFAULT_POINTER;
+	options->marker = DEFAULT_MARKER;
+	options->cycle = DEFAULT_CYCLE;
+	options->tab_accepts = DEFAULT_TAB_ACCEPTS;
+	options->right_accepts = DEFAULT_RIGHT_ACCEPTS;
+	options->left_aborts = DEFAULT_LEFT_ABORTS;
+	options->no_color = DEFAULT_NO_COLOR;
+	options->reverse = DEFAULT_REVERSE;
 }
 
-void
-options_parse(options_t *options, int argc, char *argv[])
-{
+void options_parse(options_t *options, int argc, char *argv[]) {
 	options_init(options);
 
 	int c;
 	while ((c = getopt_long(argc, argv, "mvhs0e:q:l:t:p:P:j:i", longopts, NULL)) != -1) {
 		switch (c) {
-		case 'v':
-			printf("%s\n", VERSION);
-			exit(EXIT_SUCCESS);
-		case 's': options->show_scores = 1;	break;
-		case '0': options->input_delimiter = '\0'; break;
-		case 'm': options->multi = 1; break;
-		case 'q': options->init_search = optarg; break;
-		case 'e': options->filter = optarg; break;
-		case 'b':
-			if (optarg) {
-				if (sscanf(optarg, "%d", &options->benchmark) != 1) {
+			case 'v':
+				printf("%s\n", VERSION);
+				exit(EXIT_SUCCESS);
+			case 's':
+				options->show_scores = 1;
+				break;
+			case '0':
+				options->input_delimiter = '\0';
+				break;
+			case 'm':
+				options->multi = 1;
+				break;
+			case 'q':
+				options->init_search = optarg;
+				break;
+			case 'e':
+				options->filter = optarg;
+				break;
+			case 'b':
+				if (optarg) {
+					if (sscanf(optarg, "%d", &options->benchmark) != 1) {
+						usage(argv[0]);
+						exit(EXIT_FAILURE);
+					}
+				} else {
+					options->benchmark = 100;
+				}
+				break;
+			case 't':
+				options->tty_filename = optarg;
+				break;
+			case 'p':
+				options->prompt = optarg;
+				break;
+			case 'P':
+				if (optarg && *optarg && *optarg >= '0' && *optarg <= '9')
+					options->pad = atoi(optarg);
+				break;
+			case 'j':
+				if (sscanf(optarg, "%u", &options->workers) != 1) {
 					usage(argv[0]);
 					exit(EXIT_FAILURE);
 				}
-			} else {
-				options->benchmark = 100;
-			}
-			break;
-		case 't': options->tty_filename = optarg; break;
-		case 'p': options->prompt = optarg; break;
-		case 'P':
-			if (optarg && *optarg && *optarg >= '0' && *optarg <= '9')
-				options->pad = atoi(optarg);
-			break;
-		case 'j':
-			if (sscanf(optarg, "%u", &options->workers) != 1) {
-				usage(argv[0]);
-				exit(EXIT_FAILURE);
-			}
-			break;
-		case 'l': {
-			if (!optarg)
 				break;
-			int l;
-			if (!strcmp(optarg, "max")) {
-				l = INT_MAX;
-//			} else if (sscanf(optarg, "%d", &l) != 1 || l < 3) {
-			} else if (sscanf(optarg, "%d", &l) != 1 || l < 2) {
-				fprintf(stderr, "Invalid format for --lines: %s\n", optarg);
-				fprintf(stderr, "Must be integer in range 2..\n");
-//				fprintf(stderr, "Must be integer in range 3..\n");
-//				usage(argv[0]);
-				exit(EXIT_FAILURE);
-			}
-			options->num_lines = l;
-		} break;
-		case 'i': options->show_info = 1; break;
-		case 1:
-			if (optarg && *optarg)
-				options->pointer = *optarg;
-			break;
-		case 2:
-			if (optarg && *optarg)
-				options->marker = *optarg;
-			break;
-		case 3: options->cycle = 1;	break;
-		case 4:	options->tab_accepts = 1; break;
-		case 5: options->right_accepts = 1; break;
-		case 6:	options->left_aborts = 1; break;
-		case 7:	options->no_color = 1; break;
-		case 8:	options->reverse = 1; break;
+			case 'l': {
+				if (!optarg)
+					break;
+				int l;
+				if (!strcmp(optarg, "max")) {
+					l = INT_MAX;
+					//			} else if (sscanf(optarg, "%d", &l) != 1
+					//|| l < 3) {
+				} else if (sscanf(optarg, "%d", &l) != 1 || l < 2) {
+					fprintf(stderr, "Invalid format for --lines: %s\n", optarg);
+					fprintf(stderr, "Must be integer in range 2..\n");
+					//				fprintf(stderr, "Must be integer
+					//in range 3..\n"); 				usage(argv[0]);
+					exit(EXIT_FAILURE);
+				}
+				options->num_lines = l;
+			} break;
+			case 'i':
+				options->show_info = 1;
+				break;
+			case 1:
+				if (optarg && *optarg)
+					options->pointer = *optarg;
+				break;
+			case 2:
+				if (optarg && *optarg)
+					options->marker = *optarg;
+				break;
+			case 3:
+				options->cycle = 1;
+				break;
+			case 4:
+				options->tab_accepts = 1;
+				break;
+			case 5:
+				options->right_accepts = 1;
+				break;
+			case 6:
+				options->left_aborts = 1;
+				break;
+			case 7:
+				options->no_color = 1;
+				break;
+			case 8:
+				options->reverse = 1;
+				break;
 
-		case 'h': /* fallthrough */
-		default:
-			usage(argv[0]);
-			exit(EXIT_SUCCESS);
+			case 'h': /* fallthrough */
+			default:
+				usage(argv[0]);
+				exit(EXIT_SUCCESS);
 		}
 	}
 	if (optind != argc) {

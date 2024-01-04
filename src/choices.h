@@ -6,7 +6,7 @@
 #include "match.h"
 #include "options.h"
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -42,7 +42,7 @@ score_t choices_getscore(choices_t *c, size_t n);
 void choices_prev(choices_t *c);
 void choices_next(choices_t *c);
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
 }
 #endif
 
